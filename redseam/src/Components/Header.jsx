@@ -1,10 +1,14 @@
-export function Header({ loggedIn, setLoggedIn }) {
+import { Link } from "react-router-dom";
+
+export function Header({ loggedIn, setLoggedIn, className }) {
   return (
-    <header className="py-[1.75rem] flex justify-between">
-      <div className="flex gap-[0.25rem] items-center">
-        <img src="/HandEye.svg" alt="" />
-        <div className="poppins-semibold">RedSeam Clothing</div>
-      </div>
+    <header className={`py-[1.75rem] flex justify-between ${className}`}>
+      <Link to={"/"}>
+        <div className="flex gap-[0.25rem] items-center">
+          <img src="/HandEye.svg" alt="" />
+          <div className="poppins-semibold">RedSeam Clothing</div>
+        </div>
+      </Link>
 
       {loggedIn ? <ViewForLoggedIn /> : <ViewForNotLoggedIn />}
     </header>
@@ -29,9 +33,11 @@ function ViewForLoggedIn() {
 
 function ViewForNotLoggedIn() {
   return (
-    <div className="flex gap-[0.5rem] items-center">
-      <img src="/user.svg" alt="" />
-      <div className="poppins-medium text-[0.75rem] text-nowrap">Log in</div>
-    </div>
+    <Link to={"/login"}>
+      <div className="flex gap-[0.5rem] items-center">
+        <img src="/user.svg" alt="" />
+        <div className="poppins-medium text-[0.75rem] text-nowrap">Log in</div>
+      </div>
+    </Link>
   );
 }
