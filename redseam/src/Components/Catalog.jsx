@@ -9,6 +9,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Catalog = ({ range, sortIt }) => {
   const [page, setPage] = useState(
@@ -25,7 +26,9 @@ const Catalog = ({ range, sortIt }) => {
         <>
           <div className="mt-[2rem] grid grid-cols-[repeat(auto-fill,minmax(25.75rem,1fr))] gap-[1.5rem]">
             {products.data.map((product) => (
-              <Card key={product.id} product={product} />
+              <Link key={product.id} to={`/${product.id}`}>
+                <Card product={product} />
+              </Link>
             ))}
           </div>
           <Pagination>

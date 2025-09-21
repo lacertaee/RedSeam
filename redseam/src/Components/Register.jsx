@@ -6,17 +6,36 @@ const Register = () => {
   const fileInputRef = useRef(null);
   const [file, setFile] = useState(null);
 
+  const [isFilled, setIsFilled] = useState({
+    username: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+  });
+
+  const [username, setUsername] = useState("");
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     const url = URL.createObjectURL(file);
     setFile(url);
+  };
+
+  const [password, setPassword] = useState("");
+  const [type, setType] = useState("password");
+
+  const handleToggle = () => {
+    if (type === "password") {
+      setType("text");
+    } else {
+      setType("password");
+    }
   };
   return (
     <div>
       <Header className="mx-[6.25rem]" />
       <div className="flex items-center gap-[11rem]">
         <img src="/login.png" alt="" />
-        <div>
+        <form onSubmit={registerUser}>
           <div className="poppins-semibold text-[2.625rem]">Registration</div>
           <div className="mt-[3rem] flex flex-col gap-[2.875rem]">
             <div className="relative">
@@ -59,22 +78,41 @@ const Register = () => {
             </div>
             <div className="flex flex-col gap-[1.5rem]">
               <input
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="w-[554px] border rounded-lg p-3"
                 type="text"
+                name="username"
                 placeholder="Username *"
               />
               <input
                 className="w-[554px] border rounded-lg p-3"
-                type="text"
+                type="email"
+                name="email"
                 placeholder="Email *"
               />
               <div className="relative flex justify-between items-center">
                 <input
                   className="w-[554px] border rounded-lg p-3"
-                  type="text"
+                  type={type}
+                  name="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password *"
                 />
-                <img className="absolute right-3 top-" src="/eye.svg" alt="" />
+                <img
+                  onClick={handleToggle}
+                  className="absolute right-3 top-"
+                  src="/eye.svg"
+                  alt=""
+                />
+                {/* <input
+                  className="w-[554px] border rounded-lg p-3"
+                  type="text"
+                  name="password"
+                  placeholder="Password *"
+                />
+                <img className="absolute right-3 top-" src="/eye.svg" alt="" /> */}
               </div>
               <div className="relative flex justify-between items-center">
                 <input
@@ -101,10 +139,19 @@ const Register = () => {
               </div>
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
+};
+
+const registerUser = (e) => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const username = formData.get("username");
+  const email = formData.get("email");
+  const password = formData.get("password");
+  console.log({ username, email, password });
 };
 
 export default Register;
