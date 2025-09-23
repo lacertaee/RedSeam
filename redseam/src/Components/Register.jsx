@@ -1,33 +1,75 @@
 import { Header } from "./Header";
 import { Link } from "react-router-dom";
 import { useRef, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Cookies from "js-cookie";
+
+import { Error } from "./Error";
 
 const Register = () => {
-  const fileInputRef = useRef(null);
-  const [file, setFile] = useState(null);
+  const queryClient = useQueryClient();
 
-  const [isFilled, setIsFilled] = useState({
-    username: false,
-    email: false,
-    password: false,
-    confirmPassword: false,
+  const [sizeError, setSizeError] = useState("");
+
+  const mutation = useMutation({
+    mutationFn: register,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      Cookies.set("token", data.token, { path: "/" });
+      Cookies.set("user", JSON.stringify(data.user), { path: "/" });
+      window.location.href = "/";
+    },
+    onError: (error) => {
+      setError(error.errors);
+    },
   });
 
-  const [username, setUsername] = useState("");
+  const fileInputRef = useRef(null);
+  const [file, setFile] = useState(null);
+  const [avatar, setAvatar] = useState(null);
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
+    if (file.size > 1 * 1024 * 1024) {
+      setSizeError("Avatar size exceeds 1MB");
+      return;
+    } else {
+      setSizeError("");
+      setAvatar(file);
+    }
     const url = URL.createObjectURL(file);
     setFile(url);
   };
 
-  const [password, setPassword] = useState("");
-  const [type, setType] = useState("password");
+  const registerUser = (e) => {
+    e.preventDefault();
 
-  const handleToggle = () => {
+    const form = new FormData(e.target);
+    const user = new FormData();
+
+    user.append("email", form.get("email"));
+    user.append("username", form.get("username"));
+    user.append("password", form.get("password"));
+    user.append("password_confirmation", form.get("password_confirmation"));
+    avatar && user.append("avatar", avatar);
+
+    mutation.mutate(user);
+  };
+
+  const [error, setError] = useState(null);
+
+  const [type, setType] = useState("password");
+  const [showType, setShowType] = useState("password");
+
+  const inputUi = `w-[34.625rem] border rounded-lg p-3 outline-0`;
+  const getInputUi = (hasError) =>
+    `${inputUi} ${hasError ? "border-red-500" : ""}`;
+
+  const handleToggle = (type, func) => {
     if (type === "password") {
-      setType("text");
+      func("text");
     } else {
-      setType("password");
+      func("password");
     }
   };
   return (
@@ -61,11 +103,18 @@ const Register = () => {
                   <div
                     onClick={() => {
                       setFile(null);
+                      setAvatar(null);
                       fileInputRef.current.value = "";
+                      setSizeError("");
                     }}
                     className="poppins-regular text-sm text-[#3E424A]"
                   >
                     Remove
+                  </div>
+                )}
+                {sizeError && (
+                  <div className="poppins-light text-red-500 text-xs">
+                    {sizeError}
                   </div>
                 )}
               </div>
@@ -77,50 +126,67 @@ const Register = () => {
               />
             </div>
             <div className="flex flex-col gap-[1.5rem]">
-              <input
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-[554px] border rounded-lg p-3"
-                type="text"
-                name="username"
-                placeholder="Username *"
-              />
-              <input
-                className="w-[554px] border rounded-lg p-3"
-                type="email"
-                name="email"
-                placeholder="Email *"
-              />
-              <div className="relative flex justify-between items-center">
+              <div>
                 <input
-                  className="w-[554px] border rounded-lg p-3"
-                  type={type}
-                  name="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password *"
-                />
-                <img
-                  onClick={handleToggle}
-                  className="absolute right-3 top-"
-                  src="/eye.svg"
-                  alt=""
-                />
-                {/* <input
-                  className="w-[554px] border rounded-lg p-3"
+                  className={getInputUi(error?.username)}
                   type="text"
-                  name="password"
-                  placeholder="Password *"
+                  name="username"
+                  placeholder="Username *"
                 />
-                <img className="absolute right-3 top-" src="/eye.svg" alt="" /> */}
+                {error?.username?.map((er, idx) => (
+                  <Error key={idx} error={er} />
+                ))}
               </div>
-              <div className="relative flex justify-between items-center">
+              <div>
                 <input
-                  className="w-[554px] border rounded-lg p-3"
-                  type="text"
-                  placeholder="Confirm Password *"
+                  className={getInputUi(error?.email)}
+                  type="email"
+                  name="email"
+                  placeholder="Email *"
                 />
-                <img className="absolute right-3 top-" src="/eye.svg" alt="" />
+                {error?.email?.map((er, idx) => (
+                  <Error key={idx} error={er} />
+                ))}
+              </div>
+              <div>
+                <div className="relative flex justify-between items-center">
+                  <input
+                    className={getInputUi(error?.password)}
+                    type={type}
+                    name="password"
+                    placeholder="Password *"
+                  />
+                  <img
+                    onClick={() => handleToggle(type, setType)}
+                    className="absolute right-3"
+                    src="/eye.svg"
+                    alt=""
+                  />
+                </div>
+                {error?.password?.map((er, idx) => (
+                  <Error key={idx} error={er} />
+                ))}
+              </div>
+              <div>
+                <div className="relative flex justify-between items-center">
+                  <input
+                    className={getInputUi(error?.password)}
+                    type={showType}
+                    name="password_confirmation"
+                    placeholder="Confirm Password *"
+                  />
+                  <img
+                    onClick={() => handleToggle(showType, setShowType)}
+                    className="absolute right-3 "
+                    src="/eye.svg"
+                    alt=""
+                  />
+                </div>
+                {error?.password
+                  ?.filter((msg) => msg.includes("match"))
+                  .map((msg, idx) => (
+                    <Error key={idx} error={msg} />
+                  ))}
               </div>
             </div>
             <div className="flex flex-col gap-[1.5rem]">
@@ -145,13 +211,25 @@ const Register = () => {
   );
 };
 
-const registerUser = (e) => {
-  e.preventDefault();
-  const formData = new FormData(e.target);
-  const username = formData.get("username");
-  const email = formData.get("email");
-  const password = formData.get("password");
-  console.log({ username, email, password });
-};
+async function register(user) {
+  const response = await fetch(
+    "https://api.redseam.redberryinternship.ge/api/register",
+    {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+      body: user,
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw data;
+  }
+
+  return data;
+}
 
 export default Register;

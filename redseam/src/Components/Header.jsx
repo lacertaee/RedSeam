@@ -1,6 +1,20 @@
 import { Link } from "react-router-dom";
+import Cookies from "js-cookie";
+import { useState, useEffect } from "react";
 
-export function Header({ loggedIn, setLoggedIn, className }) {
+export function Header({ className }) {
+  const user = Cookies.get("user");
+  const [avatar, setAvatar] = useState("/guy.jpg");
+
+  useEffect(() => {
+    if (user) {
+      const usr = JSON.parse(user);
+      if (usr.avatar) {
+        setAvatar(usr.avatar);
+      }
+    }
+  }, [user]);
+
   return (
     <header className={`py-[1.75rem] flex justify-between ${className}`}>
       <Link to={"/"}>
@@ -10,19 +24,21 @@ export function Header({ loggedIn, setLoggedIn, className }) {
         </div>
       </Link>
 
-      {loggedIn ? <ViewForLoggedIn /> : <ViewForNotLoggedIn />}
+      {user ? <ViewForLoggedIn avatar={avatar} /> : <ViewForNotLoggedIn />}
     </header>
   );
 }
 
-function ViewForLoggedIn() {
+function ViewForLoggedIn({ avatar }) {
+  const user = JSON.parse(Cookies.get("user"));
+
   return (
     <div className="flex gap-[1.25rem]">
       <img src="/shopping-cart.svg" alt="" />
       <div className="flex gap-[0.25rem] items-center">
         <img
           className="size-[2.5rem] rounded-full object-cover"
-          src="/guy.jpg"
+          src={avatar}
           alt=""
         />
         <img className="size-[1.25rem]" src="/chevron-down.svg" alt="" />
