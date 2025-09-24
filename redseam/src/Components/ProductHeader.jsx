@@ -72,6 +72,7 @@ export function ProductHeader({ range, setRange, setSortIt }) {
             }}
             src="/x-mark.svg"
             alt=""
+            className="size-3"
           />
         </div>
       )}

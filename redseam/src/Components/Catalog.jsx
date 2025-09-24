@@ -86,6 +86,7 @@ const getProducts = async (page, range, sortIt) => {
 
   const response = await fetch(url);
   const data = await response.json();
+
   return data;
 };
 

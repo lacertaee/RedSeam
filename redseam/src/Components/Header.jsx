@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useState, useEffect } from "react";
+import Cart from "../Components/Cart";
 
 export function Header({ className }) {
+  const [openCart, setOpenCart] = useState(false);
+
   const user = Cookies.get("user");
   const [avatar, setAvatar] = useState("/guy.jpg");
 
@@ -24,17 +27,28 @@ export function Header({ className }) {
         </div>
       </Link>
 
-      {user ? <ViewForLoggedIn avatar={avatar} /> : <ViewForNotLoggedIn />}
+      {user ? (
+        <ViewForLoggedIn
+          avatar={avatar}
+          openCart={openCart}
+          setOpenCart={setOpenCart}
+        />
+      ) : (
+        <ViewForNotLoggedIn />
+      )}
+      <Cart openCart={openCart} setOpenCart={setOpenCart} />
     </header>
   );
 }
 
-function ViewForLoggedIn({ avatar }) {
-  const user = JSON.parse(Cookies.get("user"));
-
+function ViewForLoggedIn({ avatar, openCart, setOpenCart }) {
   return (
     <div className="flex gap-[1.25rem]">
-      <img src="/shopping-cart.svg" alt="" />
+      <img
+        onClick={() => setOpenCart(!openCart)}
+        src="/shopping-cart.svg"
+        alt=""
+      />
       <div className="flex gap-[0.25rem] items-center">
         <img
           className="size-[2.5rem] rounded-full object-cover"
