@@ -1,12 +1,10 @@
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useState, useEffect } from "react";
-import Cart from "./Cart";
 
-export function Header({ className }) {
+export function Header({ className, setOpenCart }) {
   const user = Cookies.get("user");
   const [avatar, setAvatar] = useState("/guy.jpg");
-  const [openCart, setOpenCart] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -18,7 +16,9 @@ export function Header({ className }) {
   }, [user]);
 
   return (
-    <header className={`py-[1.75rem] flex justify-between ${className}`}>
+    <header
+      className={`py-[0.625rem] flex justify-between ${className} items-center`}
+    >
       <Link to={"/"}>
         <div className="flex gap-[0.25rem] items-center">
           <img src="/HandEye.svg" alt="" />
@@ -31,7 +31,6 @@ export function Header({ className }) {
       ) : (
         <ViewForNotLoggedIn />
       )}
-      <Cart openCart={openCart} setOpenCart={setOpenCart} />
     </header>
   );
 }

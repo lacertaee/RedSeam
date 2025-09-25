@@ -37,7 +37,6 @@ const Detailed = () => {
   const [matchingKeys, setMatchingKeys] = useState(0);
 
   const addToCart = async () => {
-    console.log(productState.color, productState.size);
     const response = await fetch(
       `https://api.redseam.redberryinternship.ge/api/cart/products/${id}`,
       {
