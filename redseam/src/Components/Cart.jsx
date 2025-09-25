@@ -2,6 +2,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
 const Cart = ({ openCart, setOpenCart }) => {
   const token = Cookies.get("token");
@@ -13,21 +14,21 @@ const Cart = ({ openCart, setOpenCart }) => {
   });
 
   const [items, setItems] = useState([]);
-  if (data && items.length === 0) {
-    setItems([...data]);
-  }
+  useEffect(() => {
+    if (data) setItems(data);
+  }, [data]);
 
   const [subtotal, setSubtotal] = useState(0);
   const delivery = 5;
-
   const [change, setChange] = useState(false);
 
   useEffect(() => {
-    if (items.length > 0) {
-      const sum = items.reduce((acc, item) => acc + item.total_price, 0);
-      setSubtotal(sum);
-    }
-  }, [items, change]);
+    const newSubtotal = items.reduce(
+      (acc, item) => acc + (item.total_price || 0),
+      0
+    );
+    setSubtotal(newSubtotal);
+  }, [items]);
 
   return (
     <div
@@ -37,7 +38,9 @@ const Cart = ({ openCart, setOpenCart }) => {
     >
       <div className="flex flex-col h-full">
         <div className="flex justify-between items-center">
-          <div className="poppins-medium text-xl">Shopping cart (0)</div>
+          <div className="poppins-medium text-xl">
+            Shopping cart ({items.length})
+          </div>
           <img
             onClick={() => setOpenCart(!openCart)}
             src="x-mark.svg"
@@ -53,10 +56,13 @@ const Cart = ({ openCart, setOpenCart }) => {
                 <div className="mt-6 flex flex-col gap-6">
                   {items.map((item) => (
                     <CartItem
+                      token={token}
                       change={change}
                       setChange={setChange}
                       key={item.id}
                       item={item}
+                      subtotal={subtotal}
+                      setSubtotal={setSubtotal}
                     />
                   ))}
                 </div>
@@ -90,7 +96,15 @@ const Cart = ({ openCart, setOpenCart }) => {
   );
 };
 
-export function Stepper({ change, setChange, value, onChange, item }) {
+export function Stepper({
+  subtotal,
+  setSubtotal,
+  change,
+  setChange,
+  value,
+  onChange,
+  item,
+}) {
   return (
     <div className="flex items-center gap-2 rounded-full border px-2 py-1 w-fit">
       <button
@@ -98,6 +112,8 @@ export function Stepper({ change, setChange, value, onChange, item }) {
           onChange(value - 1);
           item.quantity = value - 1;
           item.total_price -= item.price;
+          const su = subtotal - item.price;
+          setSubtotal(su);
           setChange(!change);
         }}
         disabled={value <= 1}
@@ -122,6 +138,8 @@ export function Stepper({ change, setChange, value, onChange, item }) {
           onChange(value + 1);
           item.quantity = value + 1;
           item.total_price += item.price;
+          const su = subtotal + item.price;
+          setSubtotal(su);
           setChange(!change);
         }}
       >
@@ -142,7 +160,20 @@ export function Stepper({ change, setChange, value, onChange, item }) {
   );
 }
 
-const CartItem = ({ item, change, setChange }) => {
+const CartItem = ({
+  item,
+  change,
+  setChange,
+  token,
+  subtotal,
+  setSubtotal,
+}) => {
+  const deleteMutation = useMutation({
+    mutationFn: (itemId) => deleteProduct(itemId, token),
+    onSuccess: (_, itemId) => {
+      setItems((prev) => prev.filter((i) => i.id !== itemId));
+    },
+  });
   const [quantity, setQuantity] = useState(item.quantity);
   return (
     <div className="flex gap-4 items-center">
@@ -168,17 +199,33 @@ const CartItem = ({ item, change, setChange }) => {
         </div>
         <div className="flex justify-between items-center poppins-regular text-xs text-[#3E424A]">
           <Stepper
+            subtotal={subtotal}
+            setSubtotal={setSubtotal}
             change={change}
             setChange={setChange}
             item={item}
             value={quantity}
             onChange={setQuantity}
           />
-          <div>Remove</div>
+          <div onClick={() => deleteMutation.mutate(item.id)}>Remove</div>
         </div>
       </div>
     </div>
   );
+};
+
+const deleteProduct = async (itemId, token) => {
+  const response = await fetch(
+    `https://api.redseam.redberryinternship.ge/api/cart/products/${itemId}`,
+    {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return await response.json();
 };
 
 const Empty = () => {
