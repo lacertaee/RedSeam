@@ -10,11 +10,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { useDetailed } from "../hooks/useDetailed";
+
+import { Size } from "./Size";
+import { Image } from "./Image";
+import { Color } from "./Color";
+
 import Cookies from "js-cookie";
 import { useQueryClient } from "@tanstack/react-query";
 
 const Detailed = () => {
   const { id } = useParams();
+
+  const { getProduct } = useDetailed();
 
   const token = Cookies.get("token");
 
@@ -177,13 +185,7 @@ const Detailed = () => {
                     <SelectContent>
                       {sellable &&
                         [...Array(productState.quantity).keys()].map((num) => (
-                          <SelectItem
-                            key={num + 1}
-                            value={num + 1}
-                            // onClick={() =>
-
-                            // }
-                          >
+                          <SelectItem key={num + 1} value={num + 1}>
                             {num + 1}
                           </SelectItem>
                         ))}
@@ -193,7 +195,8 @@ const Detailed = () => {
               </div>
               <button
                 onClick={() => mutation.mutate()}
-                className="flex justify-center items-center gap-2.5 rounded-[0.625rem] bg-[#FF4000] py-4 px-15 text-white poppins-medium text-lg"
+                className="disabled:opacity-60 flex justify-center items-center gap-2.5 rounded-[0.625rem] bg-[#FF4000] py-4 px-15 text-white poppins-medium text-lg"
+                disabled={!sellable}
               >
                 <img src="/shopping-cart-white.svg" alt="" />
                 Add to cart
@@ -219,42 +222,6 @@ const Detailed = () => {
       )}
     </div>
   );
-};
-
-const Size = ({ size, className, onClick }) => {
-  return (
-    <div onClick={onClick} className={className}>
-      {size}
-    </div>
-  );
-};
-
-const Image = ({ image, onClick }) => {
-  return (
-    <div onClick={onClick} className="shadow-lg">
-      <img src={image} alt="" />
-    </div>
-  );
-};
-
-const Color = ({ color, className, onClick }) => {
-  return (
-    <div onClick={onClick} className={`p-1 rounded-full ${className}`}>
-      <div
-        style={{
-          background: color === "Multi" ? "#C6CEC9" : color.toLowerCase(),
-        }}
-        className="size-9.5 rounded-full "
-      ></div>
-    </div>
-  );
-};
-
-const getProduct = async (id) => {
-  const response = await fetch(
-    `https://api.redseam.redberryinternship.ge/api/products/${id}`
-  );
-  return await response.json();
 };
 
 export default Detailed;
