@@ -5,6 +5,8 @@ import { Empty } from "./Empty";
 import { useCartItems } from "../hooks/useCartItems";
 import { CartItem } from "./CartItem";
 import Cookies from "js-cookie";
+import { Link } from "react-router-dom";
+import { DialogDemo } from "./CheckoutSuccess";
 
 export const CartBody = ({ cartOrCheckout }) => {
   const { getCartItems } = useCartItems();
@@ -12,28 +14,26 @@ export const CartBody = ({ cartOrCheckout }) => {
   const isCart = cartOrCheckout === "cart";
   const delivery = 5;
 
-  const [items, setItems] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
   const [change, setChange] = useState(false);
 
   const token = Cookies.get("token");
 
-  const { data } = useQuery({
+  const { data: items = [] } = useQuery({
     queryKey: ["cart"],
     queryFn: getCartItems,
     enabled: !!token,
   });
 
   useEffect(() => {
-    if (data) {
-      setItems(data);
-      const newSubtotal = data.reduce(
+    if (items) {
+      const newSubtotal = items.reduce(
         (acc, item) => acc + (item.total_price || 0),
         0
       );
       setSubtotal(newSubtotal);
     }
-  }, [data]);
+  }, [items]);
 
   return (
     <div
@@ -54,7 +54,6 @@ export const CartBody = ({ cartOrCheckout }) => {
                   item={item}
                   subtotal={subtotal}
                   setSubtotal={setSubtotal}
-                  setItems={setItems}
                 />
               ))}
             </div>
@@ -74,6 +73,13 @@ export const CartBody = ({ cartOrCheckout }) => {
               <div>$ {subtotal + delivery}</div>
             </div>
           </div>
+          {isCart && (
+            <Link to={"/checkout"}>
+              <button className="w-full bg-[#FF4000] rounded-[0.625rem] text-white text-[1.125rem] py-4 mt-4">
+                Go to Checkout
+              </button>
+            </Link>
+          )}
         </>
       ) : (
         <Empty />

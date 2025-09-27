@@ -1,16 +1,15 @@
+import { useFetch } from "./useFetch";
+
 export const useDeleteCartItem = () => {
-  const deleteProduct = async (itemId, token) => {
-    const response = await fetch(
+  const { fetchData } = useFetch();
+
+  const deleteProduct = async (itemId) => {
+    return await fetchData(
       `https://api.redseam.redberryinternship.ge/api/cart/products/${itemId}`,
       {
         method: "DELETE",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
       }
     );
-    return await response.json();
   };
 
   return { deleteProduct };

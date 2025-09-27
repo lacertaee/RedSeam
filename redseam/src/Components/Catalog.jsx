@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/pagination";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import Cookies from "js-cookie";
+import { useFetch } from "../hooks/useFetch";
 
 const Catalog = ({ range, sortIt }) => {
   const [page, setPage] = useState(
@@ -85,9 +85,7 @@ const getProducts = async (page, range, sortIt) => {
   url.searchParams.set("sort", sortIt);
 
   const response = await fetch(url);
-  const data = await response.json();
-
-  return data;
+  return await response.json();
 };
 
 function Card({ product }) {

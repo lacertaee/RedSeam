@@ -1,29 +1,16 @@
-import Cookies from "js-cookie";
+import { useFetch } from "./useFetch";
 
 export const useCheckout = () => {
-  const token = Cookies.get("token");
+  const { fetchData } = useFetch();
 
   const submit = async (order) => {
-    const response = await fetch(
-      "https://api.redseam.redberryinternship.ge/api/cart/checkout",
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(order),
-      }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw data;
-    }
-
-    return data;
+    return await fetchData("https://api.redseam.redberryinternship.ge/api/cart/checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(order),
+    });
   };
 
   return { submit };

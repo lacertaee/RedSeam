@@ -1,9 +1,10 @@
+import { useFetch } from "./useFetch";
+
 export const useDetailed = () => {
+  const { fetchData } = useFetch();
+
   const getProduct = async (id) => {
-    const response = await fetch(
-      `https://api.redseam.redberryinternship.ge/api/products/${id}`
-    );
-    return await response.json();
+    return await fetchData(`https://api.redseam.redberryinternship.ge/api/products/${id}`);
   };
 
   return { getProduct };

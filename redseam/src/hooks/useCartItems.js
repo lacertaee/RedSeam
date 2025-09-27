@@ -1,21 +1,10 @@
-import Cookies from "js-cookie";
+import { useFetch } from "./useFetch";
 
 export const useCartItems = () => {
-  const token = Cookies.get("token");
+  const { fetchData } = useFetch();
 
   const getCartItems = async () => {
-    const response = await fetch(
-      "https://api.redseam.redberryinternship.ge/api/cart",
-      {
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = await response.json();
-
-    return data;
+    return await fetchData("https://api.redseam.redberryinternship.ge/api/cart");
   };
 
   return { getCartItems };

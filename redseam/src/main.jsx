@@ -8,14 +8,21 @@ import Login from "./Components/Login.jsx";
 import Register from "./Components/Register.jsx";
 import Detailed from "./Components/Detailed.jsx";
 import Checkout from "./Components/Checkout.jsx";
+import HomePage from "./Components/HomePage.jsx";
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
-  { path: "/", element: <App /> },
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      { index: true, element: <HomePage /> },
+      { path: ":id", element: <Detailed /> },
+    ],
+  },
+  { path: "/checkout", element: <Checkout /> },
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },
-  { path: "/:id", element: <Detailed /> },
-  { path: "/checkout", element: <Checkout /> },
 ]);
 
 createRoot(document.getElementById("root")).render(

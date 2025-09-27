@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDeleteCartItem } from "../hooks/useDeleteCartItem";
 import { debounce } from "lodash";
 import { Stepper } from "./Stepper";
@@ -12,21 +12,27 @@ export const CartItem = ({
   token,
   subtotal,
   setSubtotal,
-  setItems,
 }) => {
   const patchQuantity = usePatchQuantity();
   const { deleteProduct } = useDeleteCartItem();
   const [quantity, setQuantity] = useState(item.quantity);
 
+  const queryClient = useQueryClient();
+
   const deleteMutation = useMutation({
-    mutationFn: (itemId) => deleteProduct(itemId, token),
-    onSuccess: (_, itemId) => {
-      setItems((prev) => prev.filter((i) => i.id !== itemId));
+    mutationFn: ({ itemId }) => deleteProduct(itemId),
+    onMutate: ({ itemId }) => {
+      queryClient.setQueryData(["cart"], (old) =>
+        old ? old.filter((i) => i.id !== itemId) : []
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["cart"]);
     },
   });
 
   const debouncedPatchQuantity = debounce((qty) => {
-    patchQuantity(item.id, qty, token);
+    patchQuantity(item.id, qty);
   }, 1000);
 
   const handleQuantityChange = (newQty) => {
@@ -67,7 +73,7 @@ export const CartItem = ({
             onChange={handleQuantityChange}
           />
           <div
-            onClick={() => deleteMutation.mutate(item.id)}
+            onClick={() => deleteMutation.mutate({ itemId: item.id })}
             className="cursor-pointer"
           >
             Remove

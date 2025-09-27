@@ -11,20 +11,19 @@ import {
 } from "@/components/ui/select";
 
 import { useDetailed } from "../hooks/useDetailed";
+import { useFetch } from "../hooks/useFetch";
 
 import { Size } from "./Size";
 import { Image } from "./Image";
 import { Color } from "./Color";
 
-import Cookies from "js-cookie";
 import { useQueryClient } from "@tanstack/react-query";
 
 const Detailed = () => {
   const { id } = useParams();
 
   const { getProduct } = useDetailed();
-
-  const token = Cookies.get("token");
+  const { fetchData } = useFetch();
 
   const { data: product } = useQuery({
     queryKey: ["product", id],
@@ -45,14 +44,12 @@ const Detailed = () => {
   const [matchingKeys, setMatchingKeys] = useState(0);
 
   const addToCart = async () => {
-    const response = await fetch(
+    return await fetchData(
       `https://api.redseam.redberryinternship.ge/api/cart/products/${id}`,
       {
         method: "POST",
         headers: {
-          Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           quantity: quantity,
@@ -61,8 +58,6 @@ const Detailed = () => {
         }),
       }
     );
-
-    return await response.json();
   };
 
   const queryClient = useQueryClient();
@@ -79,8 +74,7 @@ const Detailed = () => {
   });
 
   return (
-    <div className="mx-[6.25rem]">
-      <Header />
+    <div>
       <div className="poppins-light text-sm mt-7.5">Listing / Product</div>
       {productState && (
         <div className="mt-12.5 flex justify-between">
