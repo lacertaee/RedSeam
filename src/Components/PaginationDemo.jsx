@@ -6,7 +6,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
+} from "@/Components/ui/pagination";
 
 export const PaginationDemo = ({ setPage, products }) => {
   if (!products?.meta?.links || !Array.isArray(products.meta.links)) {

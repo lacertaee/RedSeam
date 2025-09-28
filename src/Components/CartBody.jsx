@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/Components/ui/scroll-area";
 import { Empty } from "./Empty";
 import { useFetch } from "../hooks/useFetch";
 import { CartItem } from "./CartItem";

@@ -1,4 +1,4 @@
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/Components/ui/dialog";
 import { Link } from "react-router-dom";
 
 export function DialogDemo({ trigger, open, setOpen, onClose }) {
