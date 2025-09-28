@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/pagination";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useFetch } from "../hooks/useFetch";
+import { Card } from "./Card";
 
 const Catalog = ({ range, sortIt }) => {
   const [page, setPage] = useState(
@@ -25,7 +25,7 @@ const Catalog = ({ range, sortIt }) => {
     <>
       {products && (
         <>
-          <div className="mt-[2rem] grid grid-cols-[repeat(auto-fill,minmax(25.75rem,1fr))] gap-[1.5rem]">
+          <div className="mt-8 grid grid-cols-[repeat(auto-fill,minmax(25.75rem,1fr))] gap-6">
             {products.data.map((product) => (
               <Link key={product.id} to={`/${product.id}`}>
                 <Card product={product} />
@@ -34,39 +34,49 @@ const Catalog = ({ range, sortIt }) => {
           </div>
           <Pagination>
             <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={(e) => {
-                    e.preventDefault();
-                    products.links.prev && setPage(products.links.prev);
-                  }}
-                />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink>1</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink>2</PaginationLink>
-              </PaginationItem>
+              {products.meta.links.map((link, index) => {
+                if (link.label === "&laquo; Previous") {
+                  return (
+                    <PaginationItem key={index}>
+                      <PaginationPrevious
+                        onClick={(e) => {
+                          e.preventDefault();
+                          link.url && setPage(link.url);
+                        }}
+                        disabled={!link.url}
+                      />
+                    </PaginationItem>
+                  );
+                }
 
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
+                if (link.label === "Next &raquo;") {
+                  return (
+                    <PaginationItem key={index}>
+                      <PaginationNext
+                        onClick={(e) => {
+                          e.preventDefault();
+                          link.url && setPage(link.url);
+                        }}
+                        disabled={!link.url}
+                      />
+                    </PaginationItem>
+                  );
+                }
 
-              <PaginationItem>
-                <PaginationLink>9</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink>10</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext
-                  onClick={(e) => {
-                    e.preventDefault();
-                    products.links.next && setPage(products.links.next);
-                  }}
-                />
-              </PaginationItem>
+                return (
+                  <PaginationItem key={index}>
+                    <PaginationLink
+                      isActive={link.active}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        link.url && setPage(link.url);
+                      }}
+                    >
+                      {link.label}
+                    </PaginationLink>
+                  </PaginationItem>
+                );
+              })}
             </PaginationContent>
           </Pagination>
         </>
@@ -87,21 +97,5 @@ const getProducts = async (page, range, sortIt) => {
   const response = await fetch(url);
   return await response.json();
 };
-
-function Card({ product }) {
-  return (
-    <div>
-      <img
-        className="shadow-xl w-[100%] rounded-[0.625rem]"
-        src={product.cover_image}
-        alt=""
-      />
-      <div className="mt-[0.75rem]">
-        <div className="poppins-medium text-[1.125rem]">{product.name}</div>
-        <div className="poppins-medium">$ {product.price}</div>
-      </div>
-    </div>
-  );
-}
 
 export default Catalog;

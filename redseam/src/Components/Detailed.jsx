@@ -10,7 +10,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { useDetailed } from "../hooks/useDetailed";
 import { useFetch } from "../hooks/useFetch";
 
 import { Size } from "./Size";
@@ -18,12 +17,22 @@ import { Image } from "./Image";
 import { Color } from "./Color";
 
 import { useQueryClient } from "@tanstack/react-query";
+import { MAX_QUANTITY } from "../utils/constants";
+
+import Cookies from "js-cookie";
 
 const Detailed = () => {
   const { id } = useParams();
 
-  const { getProduct } = useDetailed();
   const { fetchData } = useFetch();
+
+  const getProduct = async (id) => {
+    return await fetchData(
+      `https://api.redseam.redberryinternship.ge/api/products/${id}`
+    );
+  };
+
+  const token = Cookies.get("token");
 
   const { data: product } = useQuery({
     queryKey: ["product", id],
@@ -34,11 +43,19 @@ const Detailed = () => {
 
   useEffect(() => {
     if (product) {
-      setProductState(product);
+      const defaultSize = product.available_sizes[0];
+      const defaultColor = product.available_colors[0];
+
+      const newProduct = {
+        ...product,
+        color: defaultColor,
+        size: defaultSize,
+      };
+      setProductState(newProduct);
     }
   }, [product]);
 
-  const sellable = product && product.quantity !== undefined;
+  const sellable = token && product && MAX_QUANTITY !== undefined;
 
   const [quantity, setQuantity] = useState(1);
   const [matchingKeys, setMatchingKeys] = useState(0);
@@ -95,12 +112,12 @@ const Detailed = () => {
               ))}
             </div>
             <img
-              className="md:w-[43.938rem] border md:h-[58.563rem] object-cover"
+              className="max-w-[43.938rem] border max-h-[58.563rem] object-cover"
               src={productState.images[matchingKeys]}
               alt=""
             />
           </div>
-          <div className="flex flex-col gap-14 md:w-[44rem]">
+          <div className="flex flex-col gap-14 max-w-[44rem]">
             <div className="poppins-semibold text-3xl flex flex-col gap-5">
               <div>{productState.name}</div>
               <div>$ {productState.price}</div>
@@ -143,11 +160,11 @@ const Detailed = () => {
                   {productState.available_sizes.map((size, idx) => (
                     <Size
                       className={`
-                        flex-1 text-center poppins-regular border rounded-[0.625rem] py-2.5 px-4
+                        flex-1 text-center poppins-regular border rounded-[0.625rem] py-2.5 px-4 cursor-pointer transition-all duration-200
                         ${
                           size === productState.size
                             ? "border-[#10151F] bg-[#F8F6F7]"
-                            : "border-[#E1DFE1] bg-white"
+                            : "border-[#E1DFE1] bg-white hover:border-[#10151F] hover:bg-[#F8F6F7]"
                         }`}
                       onClick={() =>
                         setProductState((prev) => ({
@@ -162,34 +179,25 @@ const Detailed = () => {
                 </div>
               </div>
               <div>
-                {!sellable && (
-                  <span className="poppins-light text-xs">
-                    Not available right now!
-                  </span>
-                )}
                 <div className="poppins-regular">Quantity</div>
                 <div className="mt-4">
-                  <Select
-                    onValueChange={(val) => setQuantity(val)}
-                    disabled={!sellable}
-                  >
+                  <Select onValueChange={(val) => setQuantity(val)}>
                     <SelectTrigger>
                       <SelectValue placeholder={quantity} />
                     </SelectTrigger>
                     <SelectContent>
-                      {sellable &&
-                        [...Array(productState.quantity).keys()].map((num) => (
-                          <SelectItem key={num + 1} value={num + 1}>
-                            {num + 1}
-                          </SelectItem>
-                        ))}
+                      {[...Array(MAX_QUANTITY).keys()].map((num) => (
+                        <SelectItem key={num + 1} value={num + 1}>
+                          {num + 1}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
               </div>
               <button
                 onClick={() => mutation.mutate()}
-                className="disabled:opacity-60 flex justify-center items-center gap-2.5 rounded-[0.625rem] bg-[#FF4000] py-4 px-15 text-white poppins-medium text-lg"
+                className="disabled:opacity-60 flex justify-center items-center gap-2.5 rounded-[0.625rem] bg-[#FF4000] py-4 px-15 text-white poppins-medium text-lg cursor-pointer transition-all duration-200 hover:bg-[#E63600] hover:shadow-lg hover:scale-105 disabled:hover:bg-[#FF4000] disabled:hover:scale-100 disabled:hover:shadow-none"
                 disabled={!sellable}
               >
                 <img src="/shopping-cart-white.svg" alt="" />

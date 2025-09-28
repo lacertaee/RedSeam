@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Cookies from "js-cookie";
+import FloatingLabelInput from "./FloatingLabelInput";
 
 import { Error } from "./Error";
 
@@ -58,20 +59,6 @@ const Register = () => {
 
   const [error, setError] = useState(null);
 
-  const [type, setType] = useState("password");
-  const [showType, setShowType] = useState("password");
-
-  const inputUi = `w-[34.625rem] border rounded-lg p-3 outline-0`;
-  const getInputUi = (hasError) =>
-    `${inputUi} ${hasError ? "border-red-500" : ""}`;
-
-  const handleToggle = (type, func) => {
-    if (type === "password") {
-      func("text");
-    } else {
-      func("password");
-    }
-  };
   return (
     <div>
       <Header className="mx-[6.25rem]" />
@@ -96,7 +83,7 @@ const Register = () => {
                     src={file}
                   ></img>
                 )}
-                <div className="poppins-regular text-sm text-[#3E424A]">
+                <div className="poppins-regular text-sm text-[#3E424A] cursor-pointer">
                   Upload {file === null ? "image" : "New"}
                 </div>
                 {file !== null && (
@@ -107,7 +94,7 @@ const Register = () => {
                       fileInputRef.current.value = "";
                       setSizeError("");
                     }}
-                    className="poppins-regular text-sm text-[#3E424A]"
+                    className="poppins-regular text-sm text-[#3E424A] cursor-pointer"
                   >
                     Remove
                   </div>
@@ -120,68 +107,63 @@ const Register = () => {
               </div>
               <input
                 ref={fileInputRef}
-                className="cursor-pointer border opacity-0 rounded-l-full absolute top-0 py-9.5 w-54"
+                className="border opacity-0 rounded-l-full absolute top-0 py-9.5 w-54 "
                 type="file"
+                accept="image/*"
                 onChange={handleFileChange}
               />
             </div>
             <div className="flex flex-col gap-[1.5rem]">
               <div>
-                <input
-                  className={getInputUi(error?.username)}
-                  type="text"
+                <FloatingLabelInput
+                  label="Username"
                   name="username"
-                  placeholder="Username *"
+                  type="text"
+                  required={true}
+                  error={error?.username}
+                  className="w-[34.625rem]"
                 />
                 {error?.username?.map((er, idx) => (
                   <Error key={idx} error={er} />
                 ))}
               </div>
               <div>
-                <input
-                  className={getInputUi(error?.email)}
-                  type="email"
+                <FloatingLabelInput
+                  label="Email"
                   name="email"
-                  placeholder="Email *"
+                  type="email"
+                  required={true}
+                  error={error?.email}
+                  className="w-[34.625rem]"
                 />
                 {error?.email?.map((er, idx) => (
                   <Error key={idx} error={er} />
                 ))}
               </div>
               <div>
-                <div className="relative flex justify-between items-center">
-                  <input
-                    className={getInputUi(error?.password)}
-                    type={type}
-                    name="password"
-                    placeholder="Password *"
-                  />
-                  <img
-                    onClick={() => handleToggle(type, setType)}
-                    className="absolute right-3"
-                    src="/eye.svg"
-                    alt=""
-                  />
-                </div>
+                <FloatingLabelInput
+                  label="Password"
+                  name="password"
+                  type="password"
+                  required={true}
+                  error={error?.password}
+                  className="w-[34.625rem]"
+                  showPasswordToggle={true}
+                />
                 {error?.password?.map((er, idx) => (
                   <Error key={idx} error={er} />
                 ))}
               </div>
               <div>
-                <div className="relative flex justify-between items-center">
-                  <input
-                    className={getInputUi(error?.password)}
-                    type={showType}
-                    name="password_confirmation"
-                    placeholder="Confirm Password *"
-                  />
-                  <img
-                    onClick={() => handleToggle(showType, setShowType)}
-                    className="absolute right-3 "
-                    src="/eye.svg"
-                    alt=""
-                  />
-                </div>
+                <FloatingLabelInput
+                  label="Confirm Password"
+                  name="password_confirmation"
+                  type="password"
+                  required={true}
+                  error={error?.password}
+                  className="w-[34.625rem]"
+                  showPasswordToggle={true}
+                />
                 {error?.password
                   ?.filter((msg) => msg.includes("match"))
                   .map((msg, idx) => (
@@ -191,7 +173,7 @@ const Register = () => {
             </div>
             <div className="flex flex-col gap-[1.5rem]">
               <input
-                className="disabled:opacity-60 py-[0.625rem] px-[2.7rem] rounded-[0.625rem] text-white bg-[#FF4000] poppins-regular text-[0.875rem]"
+                className="disabled:opacity-60 py-[0.625rem] px-[2.7rem] rounded-[0.625rem] text-white bg-[#FF4000] poppins-regular text-[0.875rem] cursor-pointer"
                 type="submit"
                 value="Register"
               />

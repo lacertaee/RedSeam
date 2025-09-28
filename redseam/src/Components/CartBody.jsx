@@ -2,14 +2,19 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Empty } from "./Empty";
-import { useCartItems } from "../hooks/useCartItems";
+import { useFetch } from "../hooks/useFetch";
 import { CartItem } from "./CartItem";
 import Cookies from "js-cookie";
 import { Link } from "react-router-dom";
-import { DialogDemo } from "./CheckoutSuccess";
 
-export const CartBody = ({ cartOrCheckout }) => {
-  const { getCartItems } = useCartItems();
+export const CartBody = ({ setItemLength, cartOrCheckout }) => {
+  const { fetchData } = useFetch();
+
+  const getCartItems = async () => {
+    return await fetchData(
+      "https://api.redseam.redberryinternship.ge/api/cart"
+    );
+  };
 
   const isCart = cartOrCheckout === "cart";
   const delivery = 5;
@@ -32,6 +37,7 @@ export const CartBody = ({ cartOrCheckout }) => {
         0
       );
       setSubtotal(newSubtotal);
+      setItemLength && setItemLength(items.length);
     }
   }, [items]);
 
@@ -75,7 +81,10 @@ export const CartBody = ({ cartOrCheckout }) => {
           </div>
           {isCart && (
             <Link to={"/checkout"}>
-              <button className="w-full bg-[#FF4000] rounded-[0.625rem] text-white text-[1.125rem] py-4 mt-4">
+              <button
+                type="button"
+                className="w-full bg-[#FF4000] rounded-[0.625rem] text-white text-lg py-4 mt-4 cursor-pointer transition-all duration-200 hover:bg-[#E63600] hover:shadow-lg hover:scale-105"
+              >
                 Go to Checkout
               </button>
             </Link>

@@ -3,6 +3,7 @@ import { Header } from "./Header";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Cookies from "js-cookie";
+import FloatingLabelInput from "./FloatingLabelInput";
 
 import { Error } from "./Error";
 
@@ -45,11 +46,8 @@ const Login = () => {
     login.mutate(user);
   };
 
-  const inputUi = `w-[34.625rem] border rounded-lg p-3 outline-0`;
-  const getInputUi = (hasError) =>
-    `${inputUi} ${hasError ? "border-red-500" : ""}`;
 
-  const [type, setType] = useState("password");
+
   return (
     <>
       <Header className="mx-[6.25rem]" />
@@ -68,36 +66,28 @@ const Login = () => {
                 <div className="poppins-light text-red-500">{userExists}</div>
               )}
               <div>
-                <input
-                  className={getInputUi(error?.email)}
-                  type="email"
+                <FloatingLabelInput
+                  label="Email"
                   name="email"
-                  placeholder="Email *"
+                  type="email"
+                  required={true}
+                  error={error?.email}
+                  autoComplete="username"
                 />
                 {error?.email?.map((er, idx) => (
                   <Error key={idx} error={er} />
                 ))}
               </div>
               <div>
-                <div className="relative flex justify-between items-center">
-                  <input
-                    className={getInputUi(error?.password)}
-                    name="password"
-                    type={type}
-                    placeholder="Password *"
-                  />
-                  <img
-                    onClick={() =>
-                      type === "password"
-                        ? setType("text")
-                        : setType("password")
-                    }
-                    className="absolute right-3 top-"
-                    src="/eye.svg"
-                    alt=""
-                  />
-                </div>
-
+                <FloatingLabelInput
+                  label="Password"
+                  name="password"
+                  type="password"
+                  required={true}
+                  error={error?.password}
+                  autoComplete="current-password"
+                  showPasswordToggle={true}
+                />
                 {error?.password?.map((er, idx) => (
                   <Error key={idx} error={er} />
                 ))}
@@ -105,7 +95,7 @@ const Login = () => {
             </div>
             <div className="flex flex-col gap-[1.5rem]">
               <input
-                className="disabled:opacity-60 py-[0.625rem] px-[2.7rem] rounded-[0.625rem] text-white bg-[#FF4000] poppins-regular text-[0.875rem]"
+                className="disabled:opacity-60 py-[0.625rem] px-[2.7rem] rounded-[0.625rem] text-white bg-[#FF4000] poppins-regular text-[0.875rem] cursor-pointer"
                 type="submit"
                 value="Log in"
               />

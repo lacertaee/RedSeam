@@ -10,6 +10,7 @@ export function Stepper({
   return (
     <div className="flex items-center gap-2 rounded-full border px-2 py-1 w-fit">
       <button
+        type="button"
         onClick={() => {
           onChange(value - 1);
           item.quantity = value - 1;
@@ -18,6 +19,11 @@ export function Stepper({
           setChange(!change);
         }}
         disabled={value <= 1}
+        className={`transition-all duration-200 ${
+          value > 1
+            ? "cursor-pointer hover:bg-gray-100 hover:scale-110"
+            : "cursor-not-allowed opacity-50"
+        }`}
       >
         <svg
           width="16"
@@ -35,6 +41,7 @@ export function Stepper({
 
       <span className="text-center poppins-regular text-xs">{value}</span>
       <button
+        type="button"
         onClick={() => {
           onChange(value + 1);
           item.quantity = value + 1;
@@ -42,6 +49,7 @@ export function Stepper({
           setSubtotal(subtotal + item.price);
           setChange(!change);
         }}
+        className="cursor-pointer transition-all duration-200 hover:bg-gray-100 hover:scale-110"
       >
         <svg
           width="16"
