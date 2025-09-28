@@ -1,4 +1,3 @@
-import { handleFilterForm } from "./handleFilterForm";
 import { useState } from "react";
 
 export function Filter({ setRange, setShowFilter, setShow }) {
