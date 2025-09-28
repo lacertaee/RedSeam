@@ -18,7 +18,7 @@ function App() {
     <div className="mx-[6.25rem]">
       <Header setOpenCart={setOpenCart} />
       <Cart openCart={openCart} setOpenCart={setOpenCart} />
-      <Outlet />
+      <Outlet context={{ setOpenCart }} />
     </div>
   );
 }

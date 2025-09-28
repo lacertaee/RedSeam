@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useFetch } from "../hooks/useFetch";
 import { debounce } from "lodash";
@@ -14,17 +14,29 @@ export const CartItem = ({
   const { fetchData } = useFetch();
   const [quantity, setQuantity] = useState(item.quantity);
 
+  // Sync local quantity state with prop when item.quantity changes
+  useEffect(() => {
+    setQuantity(item.quantity);
+  }, [item.quantity]);
+
   const queryClient = useQueryClient();
 
   const index = item.available_colors.indexOf(item.color);
 
   const correctImage = item.images[index];
 
-  const deleteProduct = async (itemId) => {
+  const deleteProduct = async (itemId, color, size) => {
     return await fetchData(
       `https://api.redseam.redberryinternship.ge/api/cart/products/${itemId}`,
       {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          color: color,
+          size: size,
+        }),
       }
     );
   };
@@ -43,10 +55,10 @@ export const CartItem = ({
   };
 
   const deleteMutation = useMutation({
-    mutationFn: ({ itemId }) => deleteProduct(itemId),
-    onMutate: ({ itemId }) => {
+    mutationFn: ({ itemId, color, size }) => deleteProduct(itemId, color, size),
+    onMutate: ({ itemId, color, size }) => {
       queryClient.setQueryData(["cart"], (old) =>
-        old ? old.filter((i) => i.id !== itemId) : []
+        old ? old.filter((i) => !(i.id === itemId && i.color === color && i.size === size)) : []
       );
     },
     onSuccess: () => {
@@ -94,7 +106,7 @@ export const CartItem = ({
             onChange={handleQuantityChange}
           />
           <div
-            onClick={() => deleteMutation.mutate({ itemId: item.id })}
+            onClick={() => deleteMutation.mutate({ itemId: item.id, color: item.color, size: item.size })}
             className="cursor-pointer transition-all duration-200 hover:text-red-600 hover:font-medium"
           >
             Remove

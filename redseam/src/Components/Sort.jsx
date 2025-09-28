@@ -1,6 +1,6 @@
 export function Sort({ setShowSort, setSort, setSortIt }) {
   return (
-    <div className="absolute right-0 rounded-lg min-w-[14rem] bg-white py-4 flex flex-col gap-2 border mt-[0.594rem]">
+    <div className="absolute right-0 rounded-lg min-w-[14rem] z-10 bg-white py-4 flex flex-col gap-2 border mt-[0.594rem]">
       <div className="poppins-semibold px-4">Sort by</div>
       <div className="poppins-regular">
         <div

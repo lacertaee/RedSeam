@@ -1,13 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import { PaginationDemo } from "./PaginationDemo";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card } from "./Card";
@@ -32,53 +24,9 @@ const Catalog = ({ range, sortIt }) => {
               </Link>
             ))}
           </div>
-          <Pagination>
-            <PaginationContent>
-              {products.meta.links.map((link, index) => {
-                if (link.label === "&laquo; Previous") {
-                  return (
-                    <PaginationItem key={index}>
-                      <PaginationPrevious
-                        onClick={(e) => {
-                          e.preventDefault();
-                          link.url && setPage(link.url);
-                        }}
-                        disabled={!link.url}
-                      />
-                    </PaginationItem>
-                  );
-                }
-
-                if (link.label === "Next &raquo;") {
-                  return (
-                    <PaginationItem key={index}>
-                      <PaginationNext
-                        onClick={(e) => {
-                          e.preventDefault();
-                          link.url && setPage(link.url);
-                        }}
-                        disabled={!link.url}
-                      />
-                    </PaginationItem>
-                  );
-                }
-
-                return (
-                  <PaginationItem key={index}>
-                    <PaginationLink
-                      isActive={link.active}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        link.url && setPage(link.url);
-                      }}
-                    >
-                      {link.label}
-                    </PaginationLink>
-                  </PaginationItem>
-                );
-              })}
-            </PaginationContent>
-          </Pagination>
+          <div className="mt-22">
+            <PaginationDemo setPage={setPage} products={products} />
+          </div>
         </>
       )}
     </>

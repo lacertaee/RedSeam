@@ -10,7 +10,7 @@ export const Empty = () => (
       </div>
     </div>
     <Link to={"/"}>
-      <button className="bg-[#FF4000] py-2.5 px-10 cursor-pointer rounded-[0.625rem] text-white poppins-regular text-sm transition-all duration-200 hover:bg-[#E63600] hover:shadow-lg hover:scale-105">
+      <button className="bg-[#FF4000] py-2.5 px-10 cursor-pointer rounded-[0.625rem] text-white poppins-regular text-sm transition-all duration-200 hover:bg-[#E63600] hover:scale-105">
         Start shopping
       </button>
     </Link>

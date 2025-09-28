@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useParams, useOutletContext } from "react-router-dom";
 import { Header } from "./Header";
 import { useState, useEffect } from "react";
 import {
@@ -23,6 +23,7 @@ import Cookies from "js-cookie";
 
 const Detailed = () => {
   const { id } = useParams();
+  const { setOpenCart } = useOutletContext();
 
   const { fetchData } = useFetch();
 
@@ -82,8 +83,8 @@ const Detailed = () => {
   const mutation = useMutation({
     mutationFn: addToCart,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["addToCart"] });
-      window.location.href = "/";
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      setOpenCart(true);
     },
     onError: () => {
       throw "Error";
@@ -197,7 +198,7 @@ const Detailed = () => {
               </div>
               <button
                 onClick={() => mutation.mutate()}
-                className="disabled:opacity-60 flex justify-center items-center gap-2.5 rounded-[0.625rem] bg-[#FF4000] py-4 px-15 text-white poppins-medium text-lg cursor-pointer transition-all duration-200 hover:bg-[#E63600] hover:shadow-lg hover:scale-105 disabled:hover:bg-[#FF4000] disabled:hover:scale-100 disabled:hover:shadow-none"
+                className="disabled:opacity-60 flex justify-center items-center gap-2.5 rounded-[0.625rem] bg-[#FF4000] py-4 px-15 text-white poppins-medium text-lg cursor-pointer transition-all duration-200 hover:bg-[#E63600] hover:scale-105"
                 disabled={!sellable}
               >
                 <img src="/shopping-cart-white.svg" alt="" />

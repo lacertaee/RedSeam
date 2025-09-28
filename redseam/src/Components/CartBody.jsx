@@ -51,9 +51,9 @@ export const CartBody = ({ setItemLength, cartOrCheckout }) => {
         <>
           <ScrollArea className={`${isCart ? "h-[31rem]" : "h-[19rem]"}`}>
             <div className={`${isCart ? "mt-6" : ""} flex flex-col gap-9`}>
-              {items.map((item) => (
+              {items.map((item, index) => (
                 <CartItem
-                  key={item.id}
+                  key={`${item.id}-${index}`}
                   token={token}
                   change={change}
                   setChange={setChange}
@@ -83,7 +83,7 @@ export const CartBody = ({ setItemLength, cartOrCheckout }) => {
             <Link to={"/checkout"}>
               <button
                 type="button"
-                className="w-full bg-[#FF4000] rounded-[0.625rem] text-white text-lg py-4 mt-4 cursor-pointer transition-all duration-200 hover:bg-[#E63600] hover:shadow-lg hover:scale-105"
+                className="w-full bg-[#FF4000] rounded-[0.625rem] text-white text-lg py-4 mt-4 cursor-pointer transition-all duration-200 hover:bg-[#E63600] hover:scale-105"
               >
                 Go to Checkout
               </button>

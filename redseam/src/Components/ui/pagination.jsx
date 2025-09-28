@@ -45,7 +45,9 @@ function PaginationLink({ className, isActive, size = "icon", ...props }) {
           variant: isActive ? "outline" : "ghost",
           size,
         }),
-        isActive && "border border-[#FF4000] text-[#FF4000]",
+        isActive
+          ? "!border-[#FF4000] !text-[#FF4000] !bg-transparent"
+          : "text-[#212B36] border border-[#F8F6F7]",
         className
       )}
       {...props}

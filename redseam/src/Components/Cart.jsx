@@ -13,7 +13,7 @@ export const Cart = ({ openCart, setOpenCart }) => {
         />
       )}
       <div
-        className={`bg-white z-10 h-full border fixed w-1/4 top-0 right-0 p-10 transform transition-transform duration-300 ${
+        className={`bg-white z-20 h-full border fixed w-1/4 top-0 right-0 p-10 transform transition-transform duration-300 ${
           openCart ? "translate-x-0" : "translate-x-full"
         }`}
       >

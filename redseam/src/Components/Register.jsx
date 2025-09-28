@@ -121,7 +121,6 @@ const Register = () => {
                   type="text"
                   required={true}
                   error={error?.username}
-                  className="w-[34.625rem]"
                 />
                 {error?.username?.map((er, idx) => (
                   <Error key={idx} error={er} />
@@ -134,7 +133,6 @@ const Register = () => {
                   type="email"
                   required={true}
                   error={error?.email}
-                  className="w-[34.625rem]"
                 />
                 {error?.email?.map((er, idx) => (
                   <Error key={idx} error={er} />
@@ -147,7 +145,6 @@ const Register = () => {
                   type="password"
                   required={true}
                   error={error?.password}
-                  className="w-[34.625rem]"
                   showPasswordToggle={true}
                 />
                 {error?.password?.map((er, idx) => (
@@ -161,7 +158,6 @@ const Register = () => {
                   type="password"
                   required={true}
                   error={error?.password}
-                  className="w-[34.625rem]"
                   showPasswordToggle={true}
                 />
                 {error?.password
@@ -173,7 +169,7 @@ const Register = () => {
             </div>
             <div className="flex flex-col gap-[1.5rem]">
               <input
-                className="disabled:opacity-60 py-[0.625rem] px-[2.7rem] rounded-[0.625rem] text-white bg-[#FF4000] poppins-regular text-[0.875rem] cursor-pointer"
+                className="disabled:opacity-60 py-[0.625rem] px-[2.7rem] rounded-[0.625rem] text-white bg-[#FF4000] poppins-regular text-[0.875rem] cursor-pointer hover:bg-[#E63600] transition-all duration-200"
                 type="submit"
                 value="Register"
               />

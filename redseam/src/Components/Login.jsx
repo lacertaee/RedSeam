@@ -46,8 +46,6 @@ const Login = () => {
     login.mutate(user);
   };
 
-
-
   return (
     <>
       <Header className="mx-[6.25rem]" />
@@ -95,7 +93,7 @@ const Login = () => {
             </div>
             <div className="flex flex-col gap-[1.5rem]">
               <input
-                className="disabled:opacity-60 py-[0.625rem] px-[2.7rem] rounded-[0.625rem] text-white bg-[#FF4000] poppins-regular text-[0.875rem] cursor-pointer"
+                className="disabled:opacity-60 py-[0.625rem] px-[2.7rem] rounded-[0.625rem] text-white bg-[#FF4000] poppins-regular text-[0.875rem] cursor-pointer hover:bg-[#E63600] transition-all duration-200"
                 type="submit"
                 value="Log in"
               />
@@ -133,7 +131,7 @@ const loginUser = async (user) => {
     if (response.status === 422) {
       throw await data;
     } else if (response.status === 401) {
-      throw "We couldn’t log you in. Please check your email and password and try again.";
+      throw "Unable to sign in. Make sure your credentials are correct and try again.";
     }
   }
 
